@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, time::Instant};
 use screenshots::Screen;
 
 use quad_gamepad::*;
@@ -18,6 +18,8 @@ enum Buttons {
 pub fn capture_data() {
   let mut itr = 0;
   let mut controller = ControllerContext::new().unwrap();
+  let mut btn_map: Vec<(String, u128)> = Vec::new();
+  let begin_ts = std::time::Instant::now();
 
   // When a button is pressed, take a screenshot and record which buttons are being pressed
   // Keep track of previous state to see if we have been holding a button
@@ -47,29 +49,31 @@ pub fn capture_data() {
     }
 
     // Use state to name the image
-    let mut image_name = String::new();
+    let mut btn_string = String::new();
 
     // DEBUG: print buttons
-    print!("Buttons pressed: ");
+    print!("[{}] Buttons pressed: ", itr);
     for b in btn_state.as_slice() {
-      image_name += format!("{:?}_", b).as_str();
+      btn_string += format!("{:?}_", b).as_str();
       print!("{:?}, ", format!("{:?}_", b).as_str());
     }
     println!("");
-
-    image_name += format!("{}_", itr).as_str();
 
     // Get screen
     let screens = Screen::all().unwrap();
     let screen = screens.first().unwrap();
 
-    // DEBUG: Only if the A button is pressed we create and save a screenshot
-    if btn_state.contains(&Buttons::G) {
-      let img = screen.capture().unwrap();
-      let buf = img.buffer();
-
+    if btn_state.len() > 0 {
       // Write buf to filesystem
-      fs::write(PathBuf::from(format!("./training_images/{}.jpg", image_name)), buf).unwrap();
+      let pair = (btn_string, begin_ts.elapsed().as_millis());
+      btn_map.push(pair);
+    }
+
+    // DEBUG stop after 500 iterations
+    if itr == 200 {
+      println!("Captured {} timestamps of button input", btn_map.len());
+      println!("First buttons looked like this: ({}, {})", btn_map.first().unwrap().0, btn_map.first().unwrap().1);
+      break;
     }
   }
 }
