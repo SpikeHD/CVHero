@@ -9,4 +9,4 @@ edition = "2021"
 tensorflow = { version = "0.19.1", features = ["tensorflow_gpu"] }
 scrap = "0.5"
 quad-gamepad = "0.2.0-alpha"
-image = "0.24.5"
+image = "0.23.10"
