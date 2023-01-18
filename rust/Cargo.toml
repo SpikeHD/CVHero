@@ -7,6 +7,6 @@ edition = "2021"
 
 [dependencies]
 tensorflow = { version = "0.19.1", features = ["tensorflow_gpu"] }
-gilrs = "0.10.1"
-screenshots = "0.4.6"
+scrap = "0.5"
 quad-gamepad = "0.2.0-alpha"
+image = "0.24.5"
