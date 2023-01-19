@@ -25,16 +25,16 @@ fn main() {
     let cw = capturer.width();
     let ch = capturer.height();
 
-    let note_tpl = imgcodecs::imread("./notes_images/note_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
-    let combo_tpl = imgcodecs::imread("./notes_images/combo_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
-    let star_tpl = imgcodecs::imread("./notes_images/star_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
-    let star_combo_tpl = imgcodecs::imread("./notes_images/star_combo_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
+    let note_tpl = imgcodecs::imread("../notes_images/note_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
+    let combo_tpl = imgcodecs::imread("../notes_images/combo_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
+    let star_tpl = imgcodecs::imread("../notes_images/star_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
+    let star_combo_tpl = imgcodecs::imread("../notes_images/star_combo_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
 
     // train::capture_data();
     highgui::named_window("Window", highgui::WINDOW_NORMAL).unwrap();
 
     // Get one of the testing images
-    let mut img = imgcodecs::imread("./testing_images/clonehero3_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
+    let mut img = imgcodecs::imread("../testing_images/clonehero3_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
 
     let zero = Mat::zeros(
         img.rows() - note_tpl.rows() + 1,
@@ -44,7 +44,10 @@ fn main() {
     .unwrap();
     let mut r = zero.to_mat().unwrap();
     let img_mask = Mat::default();
-
+    cv::Size {
+        testImg.size().rows(),
+        testImg.cols()
+      },
     // Detect notes in image
     imgproc::match_template(&img, &note_tpl, &mut r, imgproc::TM_CCORR_NORMED, &img_mask).unwrap();
 
@@ -124,20 +127,3 @@ fn main() {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
