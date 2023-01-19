@@ -1,14 +1,29 @@
 
+use image::{buffer::ConvertBuffer, ImageBuffer, Rgba, EncodableLayout};
 use opencv::{
-    prelude::*, highgui, imgcodecs, imgproc, core::ToInputArray
+    prelude::*, highgui, imgcodecs, imgproc, core::*
 };
+use scrap;
+
+pub fn get_capturer() -> scrap::Capturer {
+    let display = scrap::Display::primary().unwrap();
+    scrap::Capturer::new(display).unwrap()
+}
+
+// // https://stackoverflow.com/a/45019661
+// pub fn process_bgra<P, C>(im: image::ImageBuffer<P, C>) -> ImageBuffer<image::Rgb<u8>, Vec<u8>>
+// where
+//     image::ImageBuffer<P, C>: image::buffer::ConvertBuffer<image::ImageBuffer<image::Rgb<u8>, Vec<u8>>>,
+//     P: image::Pixel + 'static,
+// {
+//     im.convert()
+// }
 
 fn main() {
-    // // Create training data folder
-    // if !Path::new("./training_images").is_dir() {
-    //     println!("Training data folder does not exist, creating...");
-    //     fs::create_dir("./training_images");
-    // }
+    // Gameplay capture
+    let mut capturer = get_capturer();
+    let cw = capturer.width();
+    let ch = capturer.height();
 
     let note_tpl = imgcodecs::imread("./notes_images/note_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
     let combo_tpl = imgcodecs::imread("./notes_images/combo_greyscale.png", imgcodecs::IMREAD_GRAYSCALE).unwrap();
@@ -72,7 +87,37 @@ fn main() {
     loop {
         std::thread::sleep(std::time::Duration::from_millis(50));
 
-        highgui::imshow("Window", &img).unwrap();
+        let mut buf: Vec<u8> = Vec::new();
+
+        // Capture frame and write
+        match capturer.frame() {
+            Ok(frame) => {
+                // Encode to PNG for reading
+                image::jpeg::JpegEncoder::new(&mut buf).encode(
+                    &*frame,
+                    cw as u32,
+                    ch as u32,
+                    image::ColorType::Rgb8
+                ).unwrap();
+                
+                //(*frame).clone_into(&mut buf);
+            },
+            Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                // Wait.
+            },
+            Err(e) => {
+                println!("{}", e);
+            }
+        };
+
+        // Wait for next frame, this one isn't ready
+        if buf.len() == 0 {
+            continue;
+        }
+
+        let cap = imgcodecs::imdecode(&opencv::types::VectorOfu8::from_iter(buf), imgcodecs::IMREAD_GRAYSCALE).unwrap();
+
+        highgui::imshow("Window", &cap).unwrap();
         let key = highgui::wait_key(1).unwrap();
         if key == 113 { // quit with q
             break;
