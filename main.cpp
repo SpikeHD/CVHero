@@ -12,7 +12,7 @@
 using namespace std;
 
 int main() {
-  auto noteTpl = cv::imread("../notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
+  auto noteTpl = cv::imread("./notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
 
   cv::namedWindow("window", cv::WINDOW_NORMAL);
   
@@ -42,7 +42,7 @@ int main() {
 
     auto threshold = cv::Mat();
 
-    cv::threshold(result, threshold, 0.78, 1.0, cv::THRESH_BINARY);
+    cv::threshold(result, threshold, 0.76, 1.0, cv::THRESH_BINARY);
 
     auto pts = vector<cv::Point>();
 
@@ -70,8 +70,7 @@ int main() {
 
         cv::rectangle(img, rec, col);
 
-        // Check thresholds and see if we can press a button
-        // Order is ABYXL
+        // DEBUG show coordinates of match
         stringstream s;
         s << "X: " << p.x << "Y: " << p.y;
 
@@ -83,6 +82,9 @@ int main() {
           1.0,
           col
         );
+
+        // Check thresholds and see if we can press a button
+        // Order is ABYXL
       }
     }
 
