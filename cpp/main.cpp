@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <Input_Lite.h>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
@@ -8,15 +10,6 @@
 #include "./controller.h"
 
 using namespace std;
-
-// Only keycodes we need
-enum KC {
-  a = 65,
-  s = 83,
-  j = 74,
-  k = 75,
-  l = 76
-};
 
 int main() {
   auto noteTpl = cv::imread("../notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
@@ -58,16 +51,39 @@ int main() {
 
     auto noteTplSize = noteTpl.size();
 
-    for (cv::Point p : pts) {
-      auto rec = cv::Rect();
-      rec.x = p.x;
-      rec.y = p.y;
-      rec.width = noteTpl.cols;
-      rec.height = noteTpl.rows;
+    if (pts.size() > 0) {
+      auto lastPt = pts.at(0);
 
-      auto col = cv::Scalar(255, 255, 255);
+      for (cv::Point p : pts) {
+        // If the last found point is close enough to this one, just skip it
+        if (abs(p.x - lastPt.x) < 30 && abs(p.y - lastPt.y) < 30) continue;
 
-      cv::rectangle(img, rec, col);
+        lastPt = p;
+        
+        auto rec = cv::Rect();
+        rec.x = p.x;
+        rec.y = p.y;
+        rec.width = noteTpl.cols;
+        rec.height = noteTpl.rows;
+
+        auto col = cv::Scalar(255, 255, 255);
+
+        cv::rectangle(img, rec, col);
+
+        // Check thresholds and see if we can press a button
+        // Order is ABYXL
+        stringstream s;
+        s << "X: " << p.x << "Y: " << p.y;
+
+        cv::putText(
+          img,
+          s.str(),
+          p,
+          cv::FONT_HERSHEY_COMPLEX_SMALL,
+          1.0,
+          col
+        );
+      }
     }
 
     cv::resize(img, img, cv::Size {
@@ -75,9 +91,6 @@ int main() {
     });
 
     cv::imshow("window", img);
-
-    // Press the a key for testing
-    pressKey(KC::a);
 
     int k = cv::waitKey(1);
     if (k == 113) {

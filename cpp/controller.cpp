@@ -1,68 +1,8 @@
-/**
- * !! ATTENTION !!
- * This code isn't mine, it's adapted from
- * https://github.com/octalmage/robotjs/blob/master/src/xdisplay.c
- *
- */
-#include <X11/extensions/XTest.h>
 #include "controller.h"
-#include <stdio.h> /* For fputs() */
-#include <stdlib.h> /* For atexit() */
-#include <string.h>
+#include <X11/Xlib.h>
+#include <Input_Lite.h>
 
-static Display *mainDisplay = NULL;
-static int registered = 0;
-static char *displayName = ":0.0";
-static int hasDisplayNameChanged = 0;
-
-void XCloseMainDisplay(void)
-{
-	if (mainDisplay != NULL) {
-		XCloseDisplay(mainDisplay);
-		mainDisplay = NULL;
-	}
-}
-
-Display *XGetMainDisplay(void)
-{
-	/* Close the display if displayName has changed */
-	if (hasDisplayNameChanged) {
-		XCloseMainDisplay();
-		hasDisplayNameChanged = 0;
-	}
-
-	if (mainDisplay == NULL) {
-		/* First try the user set displayName */
-		mainDisplay = XOpenDisplay(displayName);
-
-		/* Then try using environment variable DISPLAY */
-		if (mainDisplay == NULL) {
-			mainDisplay = XOpenDisplay(NULL);
-		}
-
-		if (mainDisplay == NULL) {
-			fputs("Could not open main display\n", stderr);
-		} else if (!registered) {
-			atexit(&XCloseMainDisplay);
-			registered = 1;
-		}
-	}
-
-	return mainDisplay;
-}
-
-char *getXDisplay(void)
-{
-	return displayName;
-}
-
-void setXDisplay(char *name)
-{
-	displayName = strdup(name);
-	hasDisplayNameChanged = 1;
-}
-
-void pressKey(int key) {
-  XTestFakeKeyEvent(mainDisplay, XKeysymToKeycode(mainDisplay, key), 1, CurrentTime);
-  XSync(mainDisplay, false);
+void pressKey(SL::Input_Lite::KeyCodes key) {
+  SL::Input_Lite::SendInput(SL::Input_Lite::KeyEvent{true, key});
+  SL::Input_Lite::SendInput(SL::Input_Lite::KeyEvent{false, key});
 }
