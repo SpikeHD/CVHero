@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-  auto noteTpl = cv::imread("../notes_images/note_greyscale.png", cv::ImreadModes::IMREAD_GRAYSCALE);
+  auto noteTpl = cv::imread("../notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
 
   cv::namedWindow("window", cv::WINDOW_NORMAL);
   
@@ -39,7 +39,7 @@ int main() {
 
     auto threshold = cv::Mat();
 
-    cv::threshold(result, threshold, 0.70, 1.0, cv::THRESH_BINARY);
+    cv::threshold(result, threshold, 0.78, 1.0, cv::THRESH_BINARY);
 
     auto pts = vector<cv::Point>();
 
@@ -61,7 +61,7 @@ int main() {
     }
 
     cv::resize(img, img, cv::Size {
-      1280, 720
+      640, 480
     });
 
     cv::imshow("window", img);
