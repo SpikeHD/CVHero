@@ -5,8 +5,18 @@
 #include <opencv2/highgui.hpp>
 
 #include "./screenshot.h"
+#include "./controller.h"
 
 using namespace std;
+
+// Only keycodes we need
+enum KC {
+  a = 65,
+  s = 83,
+  j = 74,
+  k = 75,
+  l = 76
+};
 
 int main() {
   auto noteTpl = cv::imread("../notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
@@ -65,6 +75,9 @@ int main() {
     });
 
     cv::imshow("window", img);
+
+    // Press the a key for testing
+    pressKey(KC::a);
 
     int k = cv::waitKey(1);
     if (k == 113) {
