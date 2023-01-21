@@ -5,11 +5,27 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
 #include <opencv2/highgui.hpp>
+#include <chrono>
 
 #include "./screenshot.h"
 #include "./controller.h"
 
 using namespace std;
+
+// Y value to hit buttons at
+static int MIN_Y = 630;
+
+// Button pressing thresholds
+static int A_Min = 1000;
+static int A_Max = 1080;
+static int B_Min = 1100;
+static int B_Max = 1180;
+static int Y_Min = 1200;
+static int Y_Max = 1280;
+static int X_Min = 1300;
+static int X_Max = 1380;
+static int L_Min = 1400;
+static int L_Max = 1480;
 
 int main() {
   auto noteTpl = cv::imread("./notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
@@ -85,11 +101,34 @@ int main() {
 
         // Check thresholds and see if we can press a button
         // Order is ABYXL
+        bool controlDisabled = false;
+
+        if (p.y > MIN_Y && !controlDisabled) {
+          if (p.x > A_Min && p.x < A_Max) {
+            pressKey(SL::Input_Lite::KEY_A);
+          }
+
+          if (p.x > B_Min && p.x < B_Max) {
+            pressKey(SL::Input_Lite::KEY_S);
+          }
+
+          if (p.x > Y_Min && p.x < Y_Max) {
+            pressKey(SL::Input_Lite::KEY_J);
+          }
+
+          if (p.x > X_Min && p.x < X_Max) {
+            pressKey(SL::Input_Lite::KEY_K);
+          }
+
+          if (p.x > L_Min && p.x < L_Max) {
+            pressKey(SL::Input_Lite::KEY_L);
+          }
+        }
       }
     }
 
     cv::resize(img, img, cv::Size {
-      640, 480
+      852, 480
     });
 
     cv::imshow("window", img);
