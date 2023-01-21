@@ -1,5 +1,5 @@
 # CVHero
-Cheating in Clone Hero using machine learning
+Cheating in Clone Hero using OpenCV
 
 # Building
 
