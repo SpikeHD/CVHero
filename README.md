@@ -14,7 +14,7 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 
 # Todo
 
-* Better star note detection
+* [ ]  Better star note detection
   * Since input image is now cropped, false detections shouldn't happen when the confidence threshold is lowered. Guess we'll see.
 * [ ] Hold notes
   * Starting AND finishing
