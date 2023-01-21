@@ -13,7 +13,7 @@
 using namespace std;
 
 // Y value to hit buttons at
-static int MIN_Y = 630;
+static int MIN_Y = 620;
 
 // Button pressing thresholds
 static int A_Min = 1000;
@@ -27,10 +27,17 @@ static int X_Max = 1380;
 static int L_Min = 1400;
 static int L_Max = 1480;
 
+int curTimeMs() {
+  auto duration = std::chrono::system_clock::now().time_since_epoch();
+  return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+}
+
 int main() {
   auto noteTpl = cv::imread("./notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
 
   cv::namedWindow("window", cv::WINDOW_NORMAL);
+
+  auto delayEnd = curTimeMs();
   
   while(1) {
     int width = 1920;
@@ -58,22 +65,31 @@ int main() {
 
     auto threshold = cv::Mat();
 
-    cv::threshold(result, threshold, 0.76, 1.0, cv::THRESH_BINARY);
+    cv::threshold(result, threshold, 0.8, 1.0, cv::THRESH_BINARY);
 
     auto pts = vector<cv::Point>();
+
+    double ptMax = 0.0;
+    cv::minMaxLoc(result, NULL, &ptMax, NULL, NULL, cv::noArray());
+
+    cerr << "Max confidence: " << ptMax << endl;
 
     // Filter out non-zeros
     cv::findNonZero(threshold, pts);
 
     auto noteTplSize = noteTpl.size();
 
+    cerr << "points: " << pts.size() << endl;
+
     if (pts.size() > 0) {
+      bool firstPt = true;
       auto lastPt = pts.at(0);
 
       for (cv::Point p : pts) {
         // If the last found point is close enough to this one, just skip it
-        if (abs(p.x - lastPt.x) < 30 && abs(p.y - lastPt.y) < 30) continue;
+        if (!firstPt && abs(p.x - lastPt.x) < 30 && abs(p.y - lastPt.y) < 30) continue;
 
+        firstPt = false;
         lastPt = p;
         
         auto rec = cv::Rect();
@@ -102,8 +118,11 @@ int main() {
         // Check thresholds and see if we can press a button
         // Order is ABYXL
         bool controlDisabled = false;
+        bool delayed = delayEnd > curTimeMs();
 
-        if (p.y > MIN_Y && !controlDisabled) {
+        if (p.y > MIN_Y && !controlDisabled && !delayed) {
+          delayEnd = curTimeMs() + chrono::milliseconds(100).count();
+
           if (p.x > A_Min && p.x < A_Max) {
             pressKey(SL::Input_Lite::KEY_A);
           }
@@ -130,6 +149,10 @@ int main() {
     cv::resize(img, img, cv::Size {
       852, 480
     });
+
+    // cv::resize(result, result, cv::Size {
+    //   852, 480
+    // });
 
     cv::imshow("window", img);
 
