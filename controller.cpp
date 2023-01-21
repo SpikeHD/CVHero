@@ -3,6 +3,9 @@
 #include <Input_Lite.h>
 #include <thread>
 
+#include <iostream>
+#include <sstream>
+
 using namespace std::chrono_literals;
 
 void pressKey(SL::Input_Lite::KeyCodes key) {

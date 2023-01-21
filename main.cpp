@@ -117,8 +117,6 @@ int main() {
         bool delayed = delayEnd > curTimeMs();
 
         if (p.y > MIN_Y && !controlDisabled && !delayed) {
-          delayEnd = curTimeMs() + chrono::milliseconds(100).count();
-
           if (p.x > A_Min && p.x < A_Max) {
             pressKey(SL::Input_Lite::KEY_A);
             btnsHeld = true;
@@ -148,6 +146,8 @@ int main() {
     }
 
     if (btnsHeld) {
+      delayEnd = curTimeMs() + chrono::milliseconds(70).count();
+
       strum();
       unpressAll();
     }
