@@ -113,22 +113,31 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
 
   // eep trck of whether any amount of buttons is being held
   bool btnsHeld = false;
+  auto ptsSeen = vector<cv::Point>();
 
   if (pts.size() > 0) {
-    bool firstPt = true;
     auto lastPt = pts.at(0);
 
     for (cv::Point p : pts) {
       // If the last found point is close enough to this one, just skip it
-      if (!firstPt && abs(p.x - lastPt.x) < 50 && abs(p.y - lastPt.y) < 30) continue;
+      // This is currently pretty inefficient but I think the performance cost shouldn't be enough to care
+      bool tooClose = false;
+      for (cv::Point sp : ptsSeen) {
+        if (abs(p.x - sp.x) < 20 && abs(p.y - sp.y) < 10) {
+          tooClose = true;
+          break;
+        }
+      }
+
+      if (tooClose) continue;
 
       // More strictness on open notes
       if (tplType == "open") {
         if (abs(p.x - lastPt.x) < 70 && abs(p.y - lastPt.y) < 30) continue;
       }
 
-      firstPt = false;
       lastPt = p;
+      ptsSeen.push_back(p);
       
       auto rec = cv::Rect();
       rec.x = p.x;
@@ -157,7 +166,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
     }
 
     if (btnsHeld) {
-      delayEnd = curTimeMs() + chrono::milliseconds(45).count();
+      delayEnd = curTimeMs() + chrono::milliseconds(40).count();
 
       strum();
       unpressAll();
@@ -187,7 +196,7 @@ int main() {
     // Crop to make processing a bit better
     img = img(cv::Range(550, 700), cv::Range(1000, 1550));
 
-    handleTplMatch(img, noteTpl, 0.77, delayEnd, "note");
+    handleTplMatch(img, noteTpl, 0.75, delayEnd, "note");
     handleTplMatch(img, barTpl, 0.91, delayEnd, "open");
 
     cv::resize(img, img, cv::Size {
