@@ -24,5 +24,4 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 # Current Progress
 Not indicitive of true performance. This is running off of my less-powerful laptop while OBS runs it's software video encoding. Performance is even better when recording is not being done!
 
-https://user-images.githubusercontent.com/25207995/213860603-3309f45c-b1a9-4b86-8d7c-0345fd693181.mp4
-
+https://user-images.githubusercontent.com/25207995/213886765-c22ae192-608d-4bbd-9ba1-b54db79e6ad2.mp4
