@@ -4,7 +4,8 @@ Cheating in Clone Hero using OpenCV
 # Building
 
 1. Install Input_Lite (https://github.com/smasherprog/input_lite)
-2. Run `make`
+2. Install OpenCV (https://opencv.org/releases/)
+3. Run `make`
 
 # Running
 
@@ -13,6 +14,8 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 
 # Todo
 
+* Better star note detection
+  * Since input image is now cropped, false detections shouldn't happen when the confidence threshold is lowered. Guess we'll see.
 * [ ] Hold notes
   * Starting AND finishing
 * [ ] MAYBE Properly handle combo notes (AKA don't strum)
