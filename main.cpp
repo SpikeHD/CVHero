@@ -13,7 +13,7 @@
 using namespace std;
 
 // Y value to hit buttons at
-static int MIN_Y = 620;
+static int MIN_Y = 600;
 
 // Button pressing thresholds
 static int A_Min = 1000;
@@ -65,21 +65,17 @@ int main() {
 
     auto threshold = cv::Mat();
 
-    cv::threshold(result, threshold, 0.8, 1.0, cv::THRESH_BINARY);
+    cv::threshold(result, threshold, 0.77, 1.0, cv::THRESH_BINARY);
 
     auto pts = vector<cv::Point>();
-
-    double ptMax = 0.0;
-    cv::minMaxLoc(result, NULL, &ptMax, NULL, NULL, cv::noArray());
-
-    cerr << "Max confidence: " << ptMax << endl;
 
     // Filter out non-zeros
     cv::findNonZero(threshold, pts);
 
     auto noteTplSize = noteTpl.size();
 
-    cerr << "points: " << pts.size() << endl;
+    // eep trck of whether any amount of buttons is being held
+    bool btnsHeld = false;
 
     if (pts.size() > 0) {
       bool firstPt = true;
@@ -125,25 +121,35 @@ int main() {
 
           if (p.x > A_Min && p.x < A_Max) {
             pressKey(SL::Input_Lite::KEY_A);
+            btnsHeld = true;
           }
 
           if (p.x > B_Min && p.x < B_Max) {
             pressKey(SL::Input_Lite::KEY_S);
+            btnsHeld = true;
           }
 
           if (p.x > Y_Min && p.x < Y_Max) {
             pressKey(SL::Input_Lite::KEY_J);
+            btnsHeld = true;
           }
 
           if (p.x > X_Min && p.x < X_Max) {
             pressKey(SL::Input_Lite::KEY_K);
+            btnsHeld = true;
           }
 
           if (p.x > L_Min && p.x < L_Max) {
             pressKey(SL::Input_Lite::KEY_L);
+            btnsHeld = true;
           }
         }
       }
+    }
+
+    if (btnsHeld) {
+      strum();
+      unpressAll();
     }
 
     cv::resize(img, img, cv::Size {
