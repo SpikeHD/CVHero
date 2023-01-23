@@ -13,7 +13,8 @@
 using namespace std;
 
 // Y value to hit buttons at
-static int MIN_Y = 80;
+static int MIN_Y = 75;
+static int INPUT_DELAY_MS = 30;
 
 // Button pressing thresholds
 static int A_Min = 50;
@@ -176,7 +177,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
     }
 
     if (btnsHeld) {
-      delayEnd = curTimeMs() + chrono::milliseconds(35).count();
+      delayEnd = curTimeMs() + chrono::milliseconds(INPUT_DELAY_MS).count();
 
       strum();
     }
@@ -205,7 +206,7 @@ int main() {
     // Crop to make processing a bit better
     img = img(cv::Range(550, 700), cv::Range(1000, 1550));
 
-    handleTplMatch(img, noteTpl, 0.76, delayEnd, "note");
+    handleTplMatch(img, noteTpl, 0.75, delayEnd, "note");
     handleTplMatch(img, barTpl, 0.91, delayEnd, "open");
 
     cv::resize(img, img, cv::Size {
