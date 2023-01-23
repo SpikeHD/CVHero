@@ -15,7 +15,7 @@ using namespace std;
 // Y value to hit buttons at
 static int MIN_Y = 75;
 
-// Input delay (higher is better for slower computers that process at a slower framerate)
+// Input delay (higher is better for slower computers that process at a slower framerate, at a cost of inaccuracy at high note densities)
 static int INPUT_DELAY_MS = 15;
 
 // Button pressing thresholds. These basically make up the columns that each note belongs to.
