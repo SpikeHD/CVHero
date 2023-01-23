@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/local/include/opencv4/",
+                "/usr/include/opencv4/",
                 "/usr/include/c++/11",
                 "/usr/include/x86_64-linux-gnu/c++/11",
                 "/usr/include/c++/11/backward",
@@ -14,7 +15,7 @@
                 "/usr/include"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
             "cppStandard": "c++14",
             "intelliSenseMode": "linux-clang-x64",

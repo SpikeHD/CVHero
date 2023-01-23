@@ -13,14 +13,14 @@
 using namespace std;
 
 // Y value to hit buttons at
-static int MIN_Y = 70;
+static int MIN_Y = 80;
 
 // Button pressing thresholds
 static int A_Min = 50;
 static int A_Max = 90;
 static int B_Min = 140;
 static int B_Max = 180;
-static int Y_Min = 230;
+static int Y_Min = 220;
 static int Y_Max = 260;
 static int X_Min = 300;
 static int X_Max = 340;
@@ -30,6 +30,9 @@ static int L_Max = 430;
 // DEBUG
 static bool controlDisabled = false;
 
+// Store keys pressed for visualization
+auto keysPressed = vector<char>();
+
 int curTimeMs() {
   auto duration = std::chrono::system_clock::now().time_since_epoch();
   return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
@@ -37,6 +40,7 @@ int curTimeMs() {
 
 bool doNotePresses(int &delayEnd, cv::Point p) {
   bool btnsHeld = false;
+  keysPressed = vector<char>();
 
   // Check thresholds and see if we can press a button
   // Order is ABYXL
@@ -45,26 +49,31 @@ bool doNotePresses(int &delayEnd, cv::Point p) {
     if (p.x > A_Min && p.x < A_Max) {
       pressKey(SL::Input_Lite::KEY_A);
       btnsHeld = true;
+      keysPressed.push_back('A');
     }
 
     if (p.x > B_Min && p.x < B_Max) {
       pressKey(SL::Input_Lite::KEY_S);
       btnsHeld = true;
+      keysPressed.push_back('S');
     }
 
     if (p.x > Y_Min && p.x < Y_Max) {
       pressKey(SL::Input_Lite::KEY_J);
       btnsHeld = true;
+      keysPressed.push_back('J');
     }
 
     if (p.x > X_Min && p.x < X_Max) {
       pressKey(SL::Input_Lite::KEY_K);
       btnsHeld = true;
+      keysPressed.push_back('K');
     }
 
     if (p.x > L_Min && p.x < L_Max) {
       pressKey(SL::Input_Lite::KEY_L);
       btnsHeld = true;
+      keysPressed.push_back('L');
     }
   }
 
@@ -78,7 +87,7 @@ bool doOpenPress(int &delayEnd, cv::Point p) {
   if (p.y > MIN_Y && !controlDisabled && !delayed) {
     // Hitting open notes requires not having anything pressed
     unpressAll();
-    strum();
+    keysPressed.push_back('O');
 
     pressed = true;
   }
@@ -117,6 +126,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
 
   if (pts.size() > 0) {
     auto lastPt = pts.at(0);
+    unpressAll();
 
     for (cv::Point p : pts) {
       // If the last found point is close enough to this one, just skip it
@@ -166,10 +176,9 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
     }
 
     if (btnsHeld) {
-      delayEnd = curTimeMs() + chrono::milliseconds(40).count();
+      delayEnd = curTimeMs() + chrono::milliseconds(35).count();
 
       strum();
-      unpressAll();
     }
   }
 }
@@ -196,12 +205,22 @@ int main() {
     // Crop to make processing a bit better
     img = img(cv::Range(550, 700), cv::Range(1000, 1550));
 
-    handleTplMatch(img, noteTpl, 0.75, delayEnd, "note");
+    handleTplMatch(img, noteTpl, 0.76, delayEnd, "note");
     handleTplMatch(img, barTpl, 0.91, delayEnd, "open");
 
     cv::resize(img, img, cv::Size {
-      852, 480
+      img.cols * 1.1, img.rows * 1.1
     });
+
+    // Draw pressed buttons on screen
+    cv::putText(
+      img,
+      "Keys: " + string(keysPressed.begin(), keysPressed.end()),
+      cv::Point(20, img.rows - 20),
+      cv::FONT_HERSHEY_COMPLEX_SMALL,
+      1.0,
+      cv::Scalar(255, 255, 255)
+    );
 
     // cv::resize(result, result, cv::Size {
     //   852, 480
