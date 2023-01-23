@@ -16,12 +16,13 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 
 * [ ]  Better star note detection
   * Since input image is now cropped, false detections shouldn't happen when the confidence threshold is lowered. Guess we'll see.
-* [ ] Hold notes
-  * Starting AND finishing
+* [x] Hold notes
+  * [x] Starting AND finishing
 * [ ] MAYBE Properly handle combo notes (AKA don't strum)
   * Kinda hard, how to know if combo has been broken or not? Not worth the effort probs
 
 # Current Progress
 Not indicitive of true performance. This is running off of my less-powerful laptop while OBS runs it's software video encoding. Performance is even better when recording is not being done!
 
-https://user-images.githubusercontent.com/25207995/213886765-c22ae192-608d-4bbd-9ba1-b54db79e6ad2.mp4
+https://user-images.githubusercontent.com/25207995/213955567-a3090e00-4270-4d35-b089-76aa9671e707.mp4
+
