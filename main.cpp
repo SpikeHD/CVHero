@@ -14,7 +14,7 @@ using namespace std;
 
 // Y value to hit buttons at
 static int MIN_Y = 75;
-static int INPUT_DELAY_MS = 30;
+static int INPUT_DELAY_MS = 15;
 
 // Button pressing thresholds
 static int A_Min = 50;
