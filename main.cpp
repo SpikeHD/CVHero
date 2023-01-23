@@ -14,9 +14,11 @@ using namespace std;
 
 // Y value to hit buttons at
 static int MIN_Y = 75;
+
+// Input delay (higher is better for slower computers that process at a slower framerate)
 static int INPUT_DELAY_MS = 15;
 
-// Button pressing thresholds
+// Button pressing thresholds. These basically make up the columns that each note belongs to.
 static int A_Min = 50;
 static int A_Max = 90;
 static int B_Min = 140;
@@ -34,18 +36,27 @@ static bool controlDisabled = false;
 // Store keys pressed for visualization
 auto keysPressed = vector<char>();
 
+/**
+ * Get current time in milliseconds.
+ */
 int curTimeMs() {
   auto duration = std::chrono::system_clock::now().time_since_epoch();
   return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 }
 
+/**
+ * Handler for regular note presses.
+ */
 bool doNotePresses(int &delayEnd, cv::Point p) {
   bool btnsHeld = false;
+
+  // Reset the pressed keys tracker
   keysPressed = vector<char>();
 
   // Check thresholds and see if we can press a button
   // Order is ABYXL
   bool delayed = delayEnd > curTimeMs();
+
   if (p.y > MIN_Y && !controlDisabled && !delayed) {
     if (p.x > A_Min && p.x < A_Max) {
       pressKey(SL::Input_Lite::KEY_A);
@@ -81,6 +92,9 @@ bool doNotePresses(int &delayEnd, cv::Point p) {
   return btnsHeld;
 }
 
+/**
+ * Handler for open note presses.
+ */
 bool doOpenPress(int &delayEnd, cv::Point p) {
   bool pressed = false;
   bool delayed = delayEnd > curTimeMs();
@@ -97,6 +111,7 @@ bool doOpenPress(int &delayEnd, cv::Point p) {
 }
 
 void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayEnd, string tplType) {
+  // Template image size.
   cv::Size s;
 
   // Note size
@@ -108,12 +123,14 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
     CV_32SC1
   );
 
+  // Match result
   auto result = cv::Mat();
 
   cv::matchTemplate(img, tpl, result, cv::TM_CCORR_NORMED);
 
   auto threshold = cv::Mat();
 
+  // Get only points that match the passed threshold
   cv::threshold(result, threshold, thresholdMin, 1.0, cv::THRESH_BINARY);
 
   auto pts = vector<cv::Point>();
@@ -121,7 +138,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
   // Filter out non-zeros
   cv::findNonZero(threshold, pts);
 
-  // eep trck of whether any amount of buttons is being held
+  // Keep trck of whether any amount of buttons is being held
   bool btnsHeld = false;
   auto ptsSeen = vector<cv::Point>();
 
@@ -140,6 +157,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
         }
       }
 
+      // Point too close? Ignore it
       if (tooClose) continue;
 
       // More strictness on open notes
@@ -150,12 +168,14 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
       lastPt = p;
       ptsSeen.push_back(p);
       
+      // Rectangle drawn overtop of found image, just for visualization purposes
       auto rec = cv::Rect();
       rec.x = p.x;
       rec.y = p.y;
       rec.width = tpl.cols;
       rec.height = tpl.rows;
 
+      // White
       auto col = cv::Scalar(255, 255, 255);
       cv::rectangle(img, rec, col);
 
@@ -163,6 +183,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
       stringstream s;
       s << "X: " << p.x << "Y: " << p.y;
 
+      // Pop the X/Y coordinates right above the detected note
       cv::putText(
         img,
         s.str(),
@@ -193,24 +214,28 @@ int main() {
   auto delayEnd = curTimeMs();
   
   while(1) {
+    // My (hardcoded) screen width and height. Sorry not sorry.
     int width = 1920;
     int height = 1080;
     int bpp = 0;
     vector<uint8_t> pixels;
 
+    // Get what is basically a screenshot of the whole display
     ImageFromDisplay(pixels, width, height, bpp);
 
     auto img = cv::Mat(height, width, bpp > 24 ? CV_8UC4 : CV_8UC3, &pixels[0]);
     cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
 
-    // Crop to make processing a bit better
+    // Crop to make processing a bit better AND faster
     img = img(cv::Range(550, 700), cv::Range(1000, 1550));
 
+    // Template match notes and open notes
     handleTplMatch(img, noteTpl, 0.745, delayEnd, "note");
     handleTplMatch(img, barTpl, 0.91, delayEnd, "open");
 
+    // Resize the now-processed image, just for preview
     cv::resize(img, img, cv::Size {
-      img.cols * 1.1, img.rows * 1.1
+      img.cols * 1.2, img.rows * 1.2
     });
 
     // Draw pressed buttons on screen
