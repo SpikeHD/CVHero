@@ -3,7 +3,7 @@
 <div align="center">
 This project is a research project for myself involving <a href="https://opencv.org/">OpenCV</a> and <a href="https://clonehero.net/">Clone Hero</a>. It uses template matching to attempt to play the game.
 <br />
-It does performs better than me, and overall I believe it does fairly well! (See: [Scores](#scores))
+It does performs better than me, and overall I believe it does fairly well! (See: <a href="#scores">Scores</a>)
 </div>
 
 # Table of Contents
