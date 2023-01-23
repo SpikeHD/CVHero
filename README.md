@@ -63,7 +63,7 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 |-|-|-|-|-|-|
 | "Soulless V" | Expert | 92% | 4☆ | 1,796,349 | 510
 | "Flamewall" | Expert | 98% | 5☆ | 529,132 | 396 
-| "Infinite Blue" | Expert | 97% | 4☆ | 221,248 | 172
+| "Infinite Blue" | Expert | 98% | 5☆ | 256,082 | 229
 | "Inori -warera shinso to tomo no ayumu mono nari-" | Expert | 96% | 5☆ | 232,712 | 312|
 
 ## Example Video
