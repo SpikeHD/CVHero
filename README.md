@@ -43,7 +43,7 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 # TODO
 
 * [ ] Do the 8x combo power thing.
-  * [ ] Could get fancy with it and detect if there is juice in the bar. Or just do the keybind every X seconds. Latter is probably easier.
+  * Could get fancy with it and detect if there is juice in the bar. Or just do the keybind every X seconds. Latter is probably easier.
 * [ ] Better star note detection
   * Since input image is now cropped, false detections shouldn't happen when the confidence threshold is lowered. Guess we'll see.
 * [ ] Fix hold bars being detected as notes, causing combo-breaks or hold-breaks.
