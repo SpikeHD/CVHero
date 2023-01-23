@@ -144,7 +144,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
 
       // More strictness on open notes
       if (tplType == "open") {
-        if (abs(p.x - lastPt.x) < 70 && abs(p.y - lastPt.y) < 30) continue;
+        if (ptsSeen.size() > 0 && abs(p.x - lastPt.x) < 100 && abs(p.y - lastPt.y) < 30) continue;
       }
 
       lastPt = p;
@@ -186,7 +186,7 @@ void handleTplMatch(cv::Mat &img, cv::Mat &tpl, double thresholdMin, int &delayE
 
 int main() {
   auto noteTpl = cv::imread("./notes_images/note_greyscale_small.png", cv::ImreadModes::IMREAD_GRAYSCALE);
-  auto barTpl = cv::imread("./notes_images/note_open_greyscale_diff.png", cv::ImreadModes::IMREAD_GRAYSCALE);
+  auto barTpl = cv::imread("./notes_images/note_open_greyscale_new_extrasmaller.png", cv::ImreadModes::IMREAD_GRAYSCALE);
 
   cv::namedWindow("window", cv::WINDOW_NORMAL);
 
@@ -206,7 +206,7 @@ int main() {
     // Crop to make processing a bit better
     img = img(cv::Range(550, 700), cv::Range(1000, 1550));
 
-    handleTplMatch(img, noteTpl, 0.75, delayEnd, "note");
+    handleTplMatch(img, noteTpl, 0.745, delayEnd, "note");
     handleTplMatch(img, barTpl, 0.91, delayEnd, "open");
 
     cv::resize(img, img, cv::Size {
