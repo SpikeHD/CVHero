@@ -16,7 +16,8 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
 
 * [ ]  Better star note detection
   * Since input image is now cropped, false detections shouldn't happen when the confidence threshold is lowered. Guess we'll see.
-* [ ] Fix hold bars being detected as notes, causing combo-breaks or hold-breaks
+* [ ] Fix hold bars being detected as notes, causing combo-breaks or hold-breaks.
+* [ ] Fix fretboard lines being detected as open notes. I think I just need a better open-note template to match.
 * [x] Hold notes
   * [x] Starting AND finishing
 * [ ] MAYBE Properly handle combo notes (AKA don't strum)
