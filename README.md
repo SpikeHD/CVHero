@@ -23,7 +23,7 @@ Currently somewhat fine-tuned for my own computer. Modify the Makefile if you ha
 
 ## Requirements
 * `g++`
-* X11 Desktop Environment (yea, I know, it's a silly, I have yet to capture the screen in a cross-platform way)
+* X11 Desktop Environment (yea, I know, it's a silly requirement, I have yet to capture the screen in a cross-platform way)
 
 ## Build
 1. Install Input_Lite (https://github.com/smasherprog/input_lite)
