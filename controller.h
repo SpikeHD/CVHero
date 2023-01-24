@@ -4,6 +4,7 @@
 #include <Input_Lite.h>
 
 void pressKey(SL::Input_Lite::KeyCodes);
+void unpressKey(SL::Input_Lite::KeyCodes);
 void unpressAll();
 void strum();
 
