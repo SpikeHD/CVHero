@@ -46,7 +46,7 @@ It also only works on Linux with an X11 desktop environment. Just don't bother r
   * Could get fancy with it and detect if there is juice in the bar. Or just do the keybind every X seconds. Latter is probably easier.
 * [ ] Better star note detection
   * Since input image is now cropped, false detections shouldn't happen when the confidence threshold is lowered. Guess we'll see.
-* [ ] Fix hold bars being detected as notes, causing combo-breaks or hold-breaks.
+* [x] Fix hold bars being detected as notes, causing combo-breaks or hold-breaks.
 * [x] Fix fretboard lines being detected as open notes. I think I just need a better open-note template to match.
   * This issue and the one above seems to be caused by thick fretboard lines showing up. Ugh.
 * [x] Hold notes
